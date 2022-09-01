@@ -1,6 +1,6 @@
 import { AzureFunction, Context } from "@azure/functions";
 import { Connection, Request, TYPES } from "tedious";
-import parseRequest from "./utils";
+import parseRequest from "../panasTimeTriggerFunc/utils";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -51,7 +51,7 @@ function setRequesetTime(connection: Connection, context: Context) {
   });
   const request = new Request(`INSERT	INTO ${table} (date) values (@time)`, (err, rowCount, rows) => {
     if (err) {
-      console.log("ERROR");
+      console.log(err);
       throw err;
     }
   });
@@ -69,9 +69,9 @@ function setRequesetTime(connection: Connection, context: Context) {
  */
 function getRequestTime(connection: Connection, context: Context) {
   let returnMessage: string;
-  const request = new Request("SELECT * FROM request_count", (err, rowCount, rows) => {
+  const request = new Request("SELECT * FROM request_count order by count", (err, rowCount, rows) => {
     if (err) {
-      console.log("ERROR");
+      console.log(err);
       throw err;
     }
     returnMessage = parseRequest(rows);
