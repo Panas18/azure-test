@@ -4,7 +4,7 @@ import { Connection, Request, TYPES } from "tedious";
 import { User } from "./domain/User";
 import { url, table, config } from "./constants";
 
-const timerTrigger: AzureFunction = async function(context: Context, myTimer: any): Promise<void> {
+const timerTrigger: AzureFunction = async function(context: Context, myTimer: any) {
   if (myTimer.isPastDue) {
     context.log("Timer function is running late!");
   }
@@ -28,7 +28,7 @@ const timerTrigger: AzureFunction = async function(context: Context, myTimer: an
       (@first_name, @last_name, @city, @state, @country, @email, @age,  @fetched_date, @fetched_time)`,
       (err, rowCount, rows) => {
         if (err) {
-          console.log(err);
+          context.log(err);
           throw err;
         }
       }
@@ -42,9 +42,6 @@ const timerTrigger: AzureFunction = async function(context: Context, myTimer: an
     request.addParameter("state", TYPES.VarChar, user.state);
     request.addParameter("fetched_date", TYPES.Date, user.fetched_date);
     request.addParameter("fetched_time", TYPES.VarChar, user.fetched_time);
-    request.on("requestCompleted", () => {
-      console.log("User ferched successfully at", user.fetched_date, user.fetched_time);
-    });
 
     connection.execSql(request);
   });
@@ -64,7 +61,6 @@ function parseResponse(response): User {
     .split(" ");
   const date = dateTime[0];
   const time = dateTime[1];
-  console.log(date, time);
   const result = response.data.results[0];
   const user: User = {
     first_name: result.name.first,

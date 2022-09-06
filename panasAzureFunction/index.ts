@@ -1,6 +1,6 @@
 import { AzureFunction, Context } from "@azure/functions";
 import { Connection, Request, TYPES } from "tedious";
-import parseRequest from "../panasTimeTriggerFunc/utils";
+import parseRequest from "./utils";
 import * as dotenv from "dotenv";
 
 dotenv.config();
